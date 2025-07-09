@@ -1,13 +1,11 @@
 import React from 'react'
-
-import FormStep1 from './Components/Stepone'
-
+import MultiStepForm from './Components/Stepone'
 function App() {
- 
+
   return (
-   <div>
-     <FormStep1/>
-   </div>
+    <div>
+     <MultiStepForm />
+    </div>
   )
 }
 
