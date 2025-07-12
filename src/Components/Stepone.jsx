@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 export default function MultiStepForm() {
   const [confirmed, setConfirmed] = useState(false);
+  const [highestCompletedStep, setHighestCompletedStep] = useState(1);
+
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -80,8 +82,15 @@ export default function MultiStepForm() {
       setConfirmed(true);
     } else if (validateStep()) {
       setStep(step + 1);
+       setHighestCompletedStep((prev) => Math.max(prev, step + 1));
     }
   };
+  const handleStepClick = (targetStep) => {
+  if (targetStep <= highestCompletedStep) {
+    setStep(targetStep);
+  }
+};
+
 
 
   const handleBack = () => {
@@ -107,19 +116,59 @@ export default function MultiStepForm() {
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] flex items-center justify-center p-8">
-      <div className="bg-white h-auto p-6 rounded-2xl shadow-lg flex w-full max-w-5xl overflow-hidden">
-        {/* Sidebar */}
-        <div className="flex-[1] h-auto p-10 text-white relative flex-col justify-between rounded-l-2xl">
+      {/* Mobile Steps Bar */}
+      <div className="relative w-full sm:hidden">
+        <img
+          src="/images/bg-sidebar-mobile.svg"
+          alt="Sidebar"
+          className="w-full h-40 object-cover"
+        />
+        <div className="absolute inset-0 flex justify-center items-center gap-4 z-10">
+          {["1", "2", "3", "4"].map((n, i) => (
+            <div
+              key={i}
+                onClick={() => handleStepClick(i + 1)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? "bg-[#bfe2fd] text-black" : "border border-white text-white"
+                }`}
+            >
+              {n}
+            </div>
+          ))}
+        </div>
+      </div>
 
-          <img src="/images/bg-sidebar-desktop.svg" alt="Sidebar" className="absolute inset-0 object-cover rounded-l-2xl " />
-          <div className="space-y-6 absolute top-0 left-0 p-10 z-10">
+      <div className="bg-white h-auto p-0 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row w-full max-w-5xl overflow-hidden">
+        {/* Sidebar */}
+
+
+
+        <div className="hidden sm:block relative w-64 flex-shrink-0 text-white rounded-l-2xl overflow-hidden">
+
+          {/* Mobile background image */}
+          <img
+            src="/images/bg-sidebar-mobile.svg"
+            alt="Sidebar"
+            className="sm:hidden w-full h-40 object-cover"
+          />
+
+          {/* Desktop background image */}
+          <img
+            src="/images/bg-sidebar-desktop.svg"
+            alt="Sidebar"
+            className="hidden sm:block absolute inset-0 object-cover"
+          />
+
+          <div className="absolute top-0 left-0 w-full h-full flex sm:block justify-center sm:justify-start items-center sm:items-start p-4 sm:p-10 z-10">
+
+
             {["YOUR INFO", "SELECT PLAN", "ADD-ONS", "SUMMARY"].map((label, i) => (
               <div key={i} className="flex items-center space-x-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? 'bg-[#bfe2fd] text-black' : 'border border-white'
+                <div onClick={() => handleStepClick(i + 1)}
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? 'bg-[#bfe2fd] text-black' : 'border border-white'
                   }`}>
                   {i + 1}
                 </div>
-                <div>
+                <div className="hidden sm:block">
                   <p className="text-xs uppercase text-white opacity-70">Step {i + 1}</p>
                   <p className="font-bold uppercase text-white">{label}</p>
                 </div>
@@ -129,247 +178,263 @@ export default function MultiStepForm() {
         </div>
 
         {/* Form Content */}
-        <div className="flex-[2] p-10">
+<div className="w-full px-4 -mt-20 sm:mt-0 sm:flex-[2] sm:p-10">
 
-          {!confirmed && (<>
-            {step === 1 && (
-              <>
-                <h1 className="text-2xl font-bold text-[#02295a] mb-2">Personal info</h1>
-                <p className="text-gray-500 mb-8">Please provide your name, email address, and phone number.</p>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-[#02295a] mb-1">Name</label>
-                    <input
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Vanessa Mint"
-                      className={`w-full border rounded-md px-4 py-2 ${errors.name ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#02295a] mb-1">Email</label>
-                    <input
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="e.g. vanessa@example.com"
-                      className={`w-full border rounded-md px-4 py-2 ${errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                    />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-[#02295a] mb-1">Phone</label>
-                    <input
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="e.g. +1 234 567 890"
-                      className={`w-full border rounded-md px-4 py-2 ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === 2 && (
-              <>
-                <h1 className="text-2xl font-bold text-[#02295a] mb-2">Select your plan</h1>
-                <p className="text-gray-500 mb-8">You have the option of monthly or yearly billing.</p>
-
-                {/* Plan Options */}
-                <div className="grid grid-cols-3 gap-4">
-                  {plans.map((plan) => {
-                    const isSelected = formData.plan === plan.id;
-                    const price = billing === 'monthly' ? `$${plan.monthly}/mo` : `$${plan.yearly}/yr`;
-                    console.log(plan)
-
-                    return (
-                      <div
-                        key={plan.id}
-                        onClick={() => setFormData({ ...formData, plan: plan.id })}
-                        className={`cursor-pointer border rounded-lg p-4 flex flex-col items-start space-y-2 ${isSelected ? 'border-[#483EFF] bg-[#f8f9ff]' : 'border-gray-300'
-                          }`}
-                      >
-                        <img src={plan.icon} alt={`${plan.name} icon`} width={40} height={40} />
-                        <div className="font-bold text-[#02295a]">{plan.name}</div>
-                        <div className="text-sm text-gray-500">{price}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+          <div className="bg-white rounded-lg shadow-lg p-6 sm:rounded-none sm:shadow-none sm:p-0">
 
 
 
+            {!confirmed && (<>
+              {step === 1 && (
+                <>
+                  <h1 className="text-2xl font-bold text-[#02295a] mb-2">Personal info</h1>
+                  <p className="text-gray-500 mb-8">Please provide your name, email address, and phone number.</p>
 
-                {/* Billing Toggle */}
-                <div className="mt-8 flex justify-center items-center gap-4 bg-[#f8f9ff] py-3 rounded-md">
-                  <span className={`${billing === 'monthly' ? 'text-[#02295a] font-bold' : 'text-gray-500'}`}>Monthly</span>
-                  <div
-                    className="relative w-12 h-6 bg-[#02295a] rounded-full cursor-pointer"
-                    onClick={() => setBilling(billing === 'monthly' ? 'yearly' : 'monthly')}
-                  >
-                    <div
-                      className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${billing === 'yearly' ? 'translate-x-6' : ''
-                        }`}
-                    />
-                  </div>
-                  <span className={`${billing === 'yearly' ? 'text-[#02295a] font-bold' : 'text-gray-500'}`}>Yearly</span>
-                </div>
-
-                {errors.plan && <p className="text-red-500 text-sm mt-4">{errors.plan}</p>}
-              </>
-            )}
-            {step === 3 && (
-              <>
-                <h1 className="text-2xl font-bold text-[#02295a] mb-2">Pick add-ons</h1>
-                <p className="text-gray-500 mb-8">Add-ons help enhance your gaming experience.</p>
-
-                <div className="space-y-4">
-                  {addons.map((addon) => {
-                    const isChecked = formData.addons.includes(addon.id);
-                    const price = billing === 'monthly' ? `+$${addon.price}/mo` : `+$${addon.price * 10}/yr`;
-
-                    return (
-                      <label
-                        key={addon.id}
-                        className={`flex items-center border rounded-lg p-4 cursor-pointer ${isChecked ? 'border-[#483EFF] bg-[#f8f9ff]' : 'border-gray-300'}`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleAddon(addon.id)}
-                          className="mr-4 w-5 h-5 accent-blue-800"
-                        />
-                        <div className="flex-1">
-                          <div className="text-[#02295a] font-medium">{addon.title}</div>
-                          <div className="text-gray-500 text-sm">{addon.description}</div>
-                        </div>
-                        <div className="text-[#483EFF] font-medium">{price}</div>
-                      </label>
-                    );
-                  })}
-                </div>
-                {errors.addons && <p className="text-red-500 text-sm mt-4">{errors.addons}</p>}
-
-              </>
-            )}
-
-            {step === 4 && (
-              <>
-                <h1 className="text-2xl font-bold text-[#02295a] mb-2">Finishing up</h1>
-                <p className="text-gray-500 mb-8">
-                  Double-check everything looks OK before confirming.
-                </p>
-
-                {/* Summary Box */}
-                <div className="bg-[#f8f9ff] rounded-lg p-4 space-y-4">
-                  {/* Plan Summary */}
-                  <div className="flex justify-between items-center border-b border-gray-300 pb-4">
+                  <div className="space-y-6">
                     <div>
-                      <div className="text-[#02295a] font-medium capitalize">
-                        {plans.find((p) => p.id === formData.plan)?.name} ({billing})
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setStep(2)}
-                        className="text-sm text-gray-500 underline hover:text-[#02295a] hover:"
-                      >
-                        Change
-                      </button>
+                      <label className="block text-sm font-medium text-[#02295a] mb-1">Name</label>
+                      <input
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. Vanessa Mint"
+                        className={`w-full border rounded-md px-4 py-2 ${errors.name ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                      />
+                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                     </div>
-                    <div className="text-[#02295a] font-bold">
-                      {billing === 'monthly'
-                        ? `$${plans.find((p) => p.id === formData.plan)?.monthly}/mo`
-                        : `$${plans.find((p) => p.id === formData.plan)?.yearly}/yr`}
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#02295a] mb-1">Email</label>
+                      <input
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="e.g. vanessa@example.com"
+                        className={`w-full border rounded-md px-4 py-2 ${errors.email ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                      />
+                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-[#02295a] mb-1">Phone</label>
+                      <input
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="e.g. +1 234 567 890"
+                        className={`w-full border rounded-md px-4 py-2 ${errors.phone ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                      />
+                      {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                     </div>
                   </div>
+                </>
+              )}
 
-                  {/* Add-ons Summary */}
-                  {formData.addons.length > 0 && (
-                    <div className="space-y-2">
-                      {addons
-                        .filter((addon) => formData.addons.includes(addon.id))
-                        .map((addon) => (
-                          <div key={addon.id} className="flex justify-between items-center">
-                            <div className="text-gray-500 text-sm">{addon.title}</div>
-                            <div className="text-[#02295a] text-sm font-medium">
-                              {billing === 'monthly'
-                                ? `+$${addon.price}/mo`
-                                : `+$${addon.price * 10}/yr`}
-                            </div>
+              {step === 2 && (
+                <>
+                  <h1 className="text-2xl font-bold text-[#02295a] mb-2">Select your plan</h1>
+                  <p className="text-gray-500 mb-8">You have the option of monthly or yearly billing.</p>
+
+                  {/* Plan Options */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    {plans.map((plan) => {
+                      const isSelected = formData.plan === plan.id;
+                      const price = billing === 'monthly' ? `$${plan.monthly}/mo` : `$${plan.yearly}/yr`;
+                      console.log(plan)
+
+                      return (
+                        <div
+                          key={plan.id}
+                          onClick={() => setFormData({ ...formData, plan: plan.id })}
+                          className={`cursor-pointer border rounded-lg p-4 flex flex-row sm:flex-col items-start sm:items-center gap-4 ${isSelected
+                            ? 'border-[#483EFF] bg-[#f8f9ff]'
+                            : 'border-gray-300'
+                            }`}
+                        >
+
+                          <img src={plan.icon} alt={`${plan.name} icon`} width={40} height={40} />
+                          <div className="flex flex-col">
+                            <div className="font-bold text-[#02295a]">{plan.name}</div>
+                            <div className="text-sm text-gray-500">{price}</div>
                           </div>
-                        ))}
-                    </div>
-                  )}
-                </div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                {/* Total */}
-                <div className="flex justify-between items-center mt-6 px-4">
-                  <div className="text-gray-500 text-sm">
-                    Total (per {billing === 'monthly' ? 'month' : 'year'})
+
+
+
+                  {/* Billing Toggle */}
+                  <div className="mt-8 flex justify-center items-center gap-4 bg-[#f8f9ff] py-3 rounded-md">
+                    <span className={`${billing === 'monthly' ? 'text-[#02295a] font-bold' : 'text-gray-500'}`}>Monthly</span>
+                    <div
+                      className="relative w-12 h-6 bg-[#02295a] rounded-full cursor-pointer"
+                      onClick={() => setBilling(billing === 'monthly' ? 'yearly' : 'monthly')}
+                    >
+                      <div
+                        className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${billing === 'yearly' ? 'translate-x-6' : ''
+                          }`}
+                      />
+                    </div>
+                    <span className={`${billing === 'yearly' ? 'text-[#02295a] font-bold' : 'text-gray-500'}`}>Yearly</span>
                   </div>
-                  <div className="text-[#483EFF] font-bold text-lg">
-                    {(() => {
-                      const planPrice =
-                        billing === 'monthly'
-                          ? plans.find((p) => p.id === formData.plan)?.monthly || 0
-                          : plans.find((p) => p.id === formData.plan)?.yearly || 0;
-                      const addonsTotal = formData.addons.reduce((sum, id) => {
-                        const addon = addons.find((a) => a.id === id);
-                        return sum + (addon ? (billing === 'monthly' ? addon.price : addon.price * 10) : 0);
-                      }, 0);
-                      return billing === 'monthly'
-                        ? `$${planPrice + addonsTotal}/mo`
-                        : `$${planPrice + addonsTotal}/yr`;
-                    })()}
+
+                  {errors.plan && <p className="text-red-500 text-sm mt-4">{errors.plan}</p>}
+                </>
+              )}
+              {step === 3 && (
+                <>
+                  <h1 className=" text-2xl font-bold text-[#02295a] mb-2">Pick add-ons</h1>
+                  <p className="text-gray-500 mb-8">Add-ons help enhance your gaming experience.</p>
+
+                  <div className="space-y-4">
+                    {addons.map((addon) => {
+                      const isChecked = formData.addons.includes(addon.id);
+                      const price = billing === 'monthly' ? `+$${addon.price}/mo` : `+$${addon.price * 10}/yr`;
+
+                      return (
+                        <label
+                          key={addon.id}
+                          className={`flex items-center border rounded-lg p-4 cursor-pointer ${isChecked ? 'border-[#483EFF] bg-[#f8f9ff]' : 'border-gray-300'}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleAddon(addon.id)}
+                            className="mr-4 w-5 h-5 accent-blue-800"
+                          />
+                          <div className="flex-1">
+                            <div className="text-[#02295a] font-medium">{addon.title}</div>
+                            <div className="text-gray-500 text-sm">{addon.description}</div>
+                          </div>
+                          <div className="text-[#483EFF] font-medium">{price}</div>
+                        </label>
+                      );
+                    })}
                   </div>
-                </div>
-              </>
+                  {errors.addons && <p className="text-red-500 text-sm mt-4">{errors.addons}</p>}
+
+                </>
+              )}
+
+              {step === 4 && (
+                <>
+                  <h1 className="text-2xl font-bold text-[#02295a] mb-2">Finishing up</h1>
+                  <p className="text-gray-500 mb-8">
+                    Double-check everything looks OK before confirming.
+                  </p>
+
+                  {/* Summary Box */}
+                  <div className="bg-[#f8f9ff] rounded-lg p-4 space-y-4">
+                    {/* Plan Summary */}
+                    <div className="flex justify-between items-center border-b border-gray-300 pb-4">
+                      <div>
+                        <div className="text-[#02295a] font-medium capitalize">
+                          {plans.find((p) => p.id === formData.plan)?.name} ({billing})
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setStep(2)}
+                          className="text-sm text-gray-500 underline hover:text-[#02295a] hover:"
+                        >
+                          Change
+                        </button>
+                      </div>
+                      <div className="text-[#02295a] font-bold">
+                        {billing === 'monthly'
+                          ? `$${plans.find((p) => p.id === formData.plan)?.monthly}/mo`
+                          : `$${plans.find((p) => p.id === formData.plan)?.yearly}/yr`}
+                      </div>
+                    </div>
+
+                    {/* Add-ons Summary */}
+                    {formData.addons.length > 0 && (
+                      <div className="space-y-2">
+                        {addons
+                          .filter((addon) => formData.addons.includes(addon.id))
+                          .map((addon) => (
+                            <div key={addon.id} className="flex justify-between items-center">
+                              <div className="text-gray-500 text-sm">{addon.title}</div>
+                              <div className="text-[#02295a] text-sm font-medium">
+                                {billing === 'monthly'
+                                  ? `+$${addon.price}/mo`
+                                  : `+$${addon.price * 10}/yr`}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Total */}
+                  <div className="flex justify-between items-center mt-6 px-4">
+                    <div className="text-gray-500 text-sm">
+                      Total (per {billing === 'monthly' ? 'month' : 'year'})
+                    </div>
+                    <div className="text-[#483EFF] font-bold text-lg">
+                      {(() => {
+                        const planPrice =
+                          billing === 'monthly'
+                            ? plans.find((p) => p.id === formData.plan)?.monthly || 0
+                            : plans.find((p) => p.id === formData.plan)?.yearly || 0;
+                        const addonsTotal = formData.addons.reduce((sum, id) => {
+                          const addon = addons.find((a) => a.id === id);
+                          return sum + (addon ? (billing === 'monthly' ? addon.price : addon.price * 10) : 0);
+                        }, 0);
+                        return billing === 'monthly'
+                          ? `$${planPrice + addonsTotal}/mo`
+                          : `$${planPrice + addonsTotal}/yr`;
+                      })()}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Navigation Buttons */}
+              {/* Navigation Buttons */}
+              <div className="w-full bg-white p-4 flex justify-between gap-4 shadow-lg sm:static sm:bg-transparent sm:p-0 sm:shadow-none">
+                {step > 1 && (
+                  <button
+                    onClick={handleBack}
+                    className="w-1/2 sm:w-auto text-gray-500 hover:text-black font-medium py-2"
+                  >
+                    Go Back
+                  </button>
+                )}
+                <button
+                  onClick={handleNext}
+                  className="w-1/2 sm:w-auto ml-auto bg-[#02295a] hover:bg-[#1c3d7a] text-white px-6 py-2 rounded-md"
+                >
+                  {step === 4 ? "Confirm" : "Next Step"}
+                </button>
+              </div>
+
+
+            </>
             )}
 
+            {confirmed && (
+              <div className="flex flex-col items-center justify-center text-center space-y-6 py-20">
+                <img src="/images/icon-thank-you.svg" alt="Thank you" className="w-16 h-16" />
+                <h1 className="text-xl sm:text-2xl font-bold text-[#02295a]">Thank you!</h1>
+                <p className="text-gray-500 max-w-md">
+                  Thanks for confirming your subscription! We hope you have fun using our platform.
+                  If you ever need support, please feel free to email us at
+                  support@loremgaming.com
+                </p>
+              </div>
+            )}
+          </div>
+        </div> {/* Close the form card div */}
 
-
-
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-10">
-              {step > 1 && (
-                <button onClick={handleBack} className="text-gray-500 hover:text-black font-medium">
-                  Go Back
-                </button>
-              )}
-              <button
-                onClick={handleNext}
-                className="ml-auto bg-[#02295a] hover:bg-[#1c3d7a] text-white px-6 py-2 rounded-md"
-              >
-                {step === 4 ? 'Confirm' : 'Next Step'}
-              </button>
-            </div>
-          </>
-          )}
-          {confirmed && (
-            <div className="flex flex-col items-center justify-center text-center space-y-6 py-20">
-              <img src="/images/icon-thank-you.svg" alt="Thank you" className="w-16 h-16" />
-              <h1 className="text-2xl font-bold text-[#02295a]">Thank you!</h1>
-              <p className="text-gray-500 max-w-md">
-                Thanks for confirming your subscription! We hope you have fun using our platform.
-                If you ever need support, please feel free to email us at
-                 support@loremgaming.com
-              </p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
