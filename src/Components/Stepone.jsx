@@ -82,14 +82,14 @@ export default function MultiStepForm() {
       setConfirmed(true);
     } else if (validateStep()) {
       setStep(step + 1);
-       setHighestCompletedStep((prev) => Math.max(prev, step + 1));
+      setHighestCompletedStep((prev) => Math.max(prev, step + 1));
     }
   };
   const handleStepClick = (targetStep) => {
-  if (targetStep <= highestCompletedStep) {
-    setStep(targetStep);
-  }
-};
+    if (targetStep <= highestCompletedStep) {
+      setStep(targetStep);
+    }
+  };
 
 
 
@@ -115,7 +115,9 @@ export default function MultiStepForm() {
 
 
   return (
-    <div className="min-h-screen bg-[#f0f6ff] flex items-center justify-center p-8">
+<div className="min-h-screen bg-[#f0f6ff] flex flex-col sm:flex-row items-center sm:items-center justify-start sm:justify-center p-4 sm:p-0">
+
+
       {/* Mobile Steps Bar */}
       <div className="relative w-full sm:hidden">
         <img
@@ -123,11 +125,13 @@ export default function MultiStepForm() {
           alt="Sidebar"
           className="w-full h-40 object-cover"
         />
-        <div className="absolute inset-0 flex justify-center items-center gap-4 z-10">
+        <div className="absolute inset-0 flex justify-center items-center gap-3 pt-6">
+
+
           {["1", "2", "3", "4"].map((n, i) => (
             <div
               key={i}
-                onClick={() => handleStepClick(i + 1)}
+              onClick={() => handleStepClick(i + 1)}
               className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? "bg-[#bfe2fd] text-black" : "border border-white text-white"
                 }`}
             >
@@ -137,11 +141,9 @@ export default function MultiStepForm() {
         </div>
       </div>
 
-      <div className="bg-white h-auto p-0 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row w-full max-w-5xl overflow-hidden">
+      <div className="bg-white h-auto p-6 sm:p-6 rounded-xl shadow-lg flex flex-col sm:flex-row w-full max-w-5xl overflow-hidden mt-[-4rem] sm:mt-0">
+
         {/* Sidebar */}
-
-
-
         <div className="hidden sm:block relative w-64 flex-shrink-0 text-white rounded-l-2xl overflow-hidden">
 
           {/* Mobile background image */}
@@ -150,7 +152,6 @@ export default function MultiStepForm() {
             alt="Sidebar"
             className="sm:hidden w-full h-40 object-cover"
           />
-
           {/* Desktop background image */}
           <img
             src="/images/bg-sidebar-desktop.svg"
@@ -158,14 +159,12 @@ export default function MultiStepForm() {
             className="hidden sm:block absolute inset-0 object-cover"
           />
 
-          <div className="absolute top-0 left-0 w-full h-full flex sm:block justify-center sm:justify-start items-center sm:items-start p-4 sm:p-10 z-10">
-
-
+          <div className="absolute top-0 left-0 w-full h-full flex space-y-6 sm:block justify-center sm:justify-start items-center sm:items-start p-4 sm:p-10 z-10">
             {["YOUR INFO", "SELECT PLAN", "ADD-ONS", "SUMMARY"].map((label, i) => (
               <div key={i} className="flex items-center space-x-4">
                 <div onClick={() => handleStepClick(i + 1)}
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? 'bg-[#bfe2fd] text-black' : 'border border-white'
-                  }`}>
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === i + 1 ? 'bg-[#bfe2fd] text-black' : 'border border-white'
+                    }`}>
                   {i + 1}
                 </div>
                 <div className="hidden sm:block">
@@ -178,20 +177,15 @@ export default function MultiStepForm() {
         </div>
 
         {/* Form Content */}
-<div className="w-full px-4 -mt-20 sm:mt-0 sm:flex-[2] sm:p-10">
-
-
-          <div className="bg-white rounded-lg shadow-lg p-6 sm:rounded-none sm:shadow-none sm:p-0">
-
-
-
+        <div className="relative z-10 w-full px-4 pt-0 sm:pt-0 sm:flex-[2] sm:p-10">
+          <div className="bg-white rounded-xl shadow-none p-6 sm:rounded-none sm:shadow-none p-0 sm:p-0">
             {!confirmed && (<>
               {step === 1 && (
                 <>
                   <h1 className="text-2xl font-bold text-[#02295a] mb-2">Personal info</h1>
                   <p className="text-gray-500 mb-8">Please provide your name, email address, and phone number.</p>
 
-                  <div className="space-y-6">
+                  <div className="space-y-6 pb-10">
                     <div>
                       <label className="block text-sm font-medium text-[#02295a] mb-1">Name</label>
                       <input
@@ -268,9 +262,6 @@ export default function MultiStepForm() {
                       );
                     })}
                   </div>
-
-
-
 
                   {/* Billing Toggle */}
                   <div className="mt-8 flex justify-center items-center gap-4 bg-[#f8f9ff] py-3 rounded-md">
@@ -400,7 +391,8 @@ export default function MultiStepForm() {
 
               {/* Navigation Buttons */}
               {/* Navigation Buttons */}
-              <div className="w-full bg-white p-4 flex justify-between gap-4 shadow-lg sm:static sm:bg-transparent sm:p-0 sm:shadow-none">
+              <div className="w-full fixed bottom-0 left-0 bg-white p-4 flex justify-between gap-4 pt-10 sm:static sm:bg-transparent sm:p-0 sm:shadow-none">
+
                 {step > 1 && (
                   <button
                     onClick={handleBack}
@@ -411,7 +403,7 @@ export default function MultiStepForm() {
                 )}
                 <button
                   onClick={handleNext}
-                  className="w-1/2 sm:w-auto ml-auto bg-[#02295a] hover:bg-[#1c3d7a] text-white px-6 py-2 rounded-md"
+                  className="w-1/2 sm:w-auto  ml-auto bg-[#02295a] hover:bg-[#1c3d7a] text-white px-6 py-2 rounded-md"
                 >
                   {step === 4 ? "Confirm" : "Next Step"}
                 </button>
