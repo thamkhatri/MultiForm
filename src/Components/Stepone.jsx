@@ -115,7 +115,7 @@ export default function MultiStepForm() {
 
 
   return (
-<div className="min-h-screen bg-[#f0f6ff] flex flex-col sm:flex-row items-center sm:items-center justify-start sm:justify-center p-4 sm:p-0">
+<div className="min-h-screen bg-white flex flex-col sm:flex-row items-center sm:items-center justify-start sm:justify-center p-4 sm:p-0">
 
 
       {/* Mobile Steps Bar */}
@@ -125,7 +125,7 @@ export default function MultiStepForm() {
           alt="Sidebar"
           className="w-full h-40 object-cover"
         />
-        <div className="absolute inset-0 flex justify-center items-center gap-3 pt-6">
+        <div className="  absolute inset-0 flex justify-center items-center gap-3 pt-6">
 
 
           {["1", "2", "3", "4"].map((n, i) => (
